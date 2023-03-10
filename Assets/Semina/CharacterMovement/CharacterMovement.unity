@@ -580,6 +580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1d6473ad8374f19991119273dc684b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thirdPersonController: {fileID: 449829036}
 --- !u!1 &215063116
 GameObject:
   m_ObjectHideFlags: 0
@@ -1721,6 +1722,7 @@ MonoBehaviour:
   playerAnimatorController: {fileID: 449829031}
   rigidBody: {fileID: 449829034}
   isGrounded: 1
+  sphereCaster: {fileID: 449829037}
 --- !u!114 &449829037
 MonoBehaviour:
   m_ObjectHideFlags: 0

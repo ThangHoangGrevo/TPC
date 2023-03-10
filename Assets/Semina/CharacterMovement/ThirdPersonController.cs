@@ -19,7 +19,7 @@ namespace Semina
 		[SerializeField] private PlayerAnimatorController playerAnimatorController;
 		[SerializeField] private Rigidbody rigidBody;
 		[SerializeField] private bool isGrounded = true;
-		// [SerializeField] private SphereCaster sphereCaster;
+		[SerializeField] private SphereCaster sphereCaster;
 
 		private bool IsGrounded
 		{
@@ -61,8 +61,8 @@ namespace Semina
 
 		private void Update()
 		{
-			// IsGrounded = sphereCaster.IsIntersecting();
-			// playerAnimatorController.IsFreeFall = rigidBody.velocity.y < 0f && IsGrounded == false;
+			IsGrounded = sphereCaster.IsIntersecting();
+			playerAnimatorController.IsFreeFall = rigidBody.velocity.y < 0f && IsGrounded == false;
 		}
 
 		private void MoveCharacter(Vector3 inputSurfaceVelocity)
@@ -89,6 +89,11 @@ namespace Semina
 		private void Reset()
 		{
 			playerTransform = GetComponent<Transform>();
+		}
+
+		public void RotateCamera(Vector2 currentMouseDeltaPosition)
+		{
+			// throw new NotImplementedException();
 		}
 	}
 }
