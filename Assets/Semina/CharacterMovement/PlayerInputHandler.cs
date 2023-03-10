@@ -13,7 +13,7 @@ namespace Semina
 		{
 			if (Input.GetKeyUp(KeyCode.Space))
 			{
-				playerAnimatorController.Jump();
+				
 			}
 		}
 	}

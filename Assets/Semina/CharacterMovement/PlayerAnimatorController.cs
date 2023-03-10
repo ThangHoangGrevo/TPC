@@ -47,10 +47,5 @@ namespace Semina
 			animator.SetBool(IsFreeFallHash, IsFreeFall);
 			animator.SetFloat(SpeedHash, Speed);
 		}
-
-		public void Jump()
-		{
-			animator.SetTrigger(JumpHash);
-		}
 	}
 }
