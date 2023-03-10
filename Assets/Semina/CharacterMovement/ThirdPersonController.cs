@@ -20,8 +20,10 @@ namespace Semina
 		[SerializeField] private Rigidbody rigidBody;
 		[SerializeField] private bool isGrounded = true;
 		[SerializeField] private SphereCaster sphereCaster;
+		[SerializeField] private Transform cameraFocusPoint;
+		private Vector3 cameraRotation;
 
-		private bool IsGrounded
+		public bool IsGrounded
 		{
 			get => isGrounded;
 			set
@@ -35,6 +37,7 @@ namespace Semina
 		private void Start()
 		{
 			currentSpeed = speed;
+			cameraRotation = cameraFocusPoint.rotation.eulerAngles;
 		}
 
 		public void Jump()
@@ -71,12 +74,28 @@ namespace Semina
 			rigidBody.velocity = rigidBodyVelocity;
 
 			if (inputSurfaceVelocity == Vector3.zero) return;
-			transform.rotation = Quaternion.RotateTowards(playerTransform.rotation, Quaternion.LookRotation(inputSurfaceVelocity), rotationSpeed * Time.deltaTime);
+
+			transform.rotation = Quaternion.RotateTowards(playerTransform.rotation, CalculateTargetRotation(inputSurfaceVelocity), rotationSpeed * Time.deltaTime);
 		}
 
-		private Vector3 CalculateVelocity(Vector3 horizontalVelocity)
+		private static Quaternion CalculateTargetRotation(Vector3 inputSurfaceVelocity)
 		{
-			var rigidBodyVelocity = new Vector3(horizontalVelocity.x, 0, horizontalVelocity.z);
+			// return GetCameraLookRotation() * Quaternion.LookRotation(inputSurfaceVelocity);
+			return Quaternion.LookRotation(inputSurfaceVelocity);
+		}
+
+		// private static Quaternion GetCameraLookRotation()
+		// {
+		// 	var horizontalDirection = Camera.main.transform.forward;
+		// 	horizontalDirection.y = 0;
+		// 	return Quaternion.LookRotation(horizontalDirection);
+		// }
+
+		private Vector3 CalculateVelocity(Vector3 inputSurfaceVelocity)
+		{
+			// var cameraLookRotation = GetCameraLookRotation();
+			// var rigidBodyVelocity = cameraLookRotation * new Vector3(inputSurfaceVelocity.x, 0, inputSurfaceVelocity.z);
+			var rigidBodyVelocity = new Vector3(inputSurfaceVelocity.x, 0, inputSurfaceVelocity.z);
 			rigidBodyVelocity.y = rigidBody.velocity.y;
 			return rigidBodyVelocity;
 		}
@@ -91,9 +110,11 @@ namespace Semina
 			playerTransform = GetComponent<Transform>();
 		}
 
-		public void RotateCamera(Vector2 currentMouseDeltaPosition)
+		public void RotateCamera(Vector2 look)
 		{
-			// throw new NotImplementedException();
+			cameraRotation += new Vector3(-look.y, look.x);
+			var quaternion = Quaternion.Euler(cameraRotation);
+			cameraFocusPoint.rotation = quaternion;
 		}
 	}
 }
