@@ -15,18 +15,13 @@ namespace Semina
 		[SerializeField] private float currentSpeed;
 		[SerializeField] private float rotationSpeed = 360.0f;
 		[SerializeField] private float jumpSpeed = 2.0f;
-		[SerializeField] private float lookSpeed = 2.0f;
 		[SerializeField] private Transform playerTransform;
 		[SerializeField] private PlayerAnimatorController playerAnimatorController;
 		[SerializeField] private Rigidbody rigidBody;
 		[SerializeField] private bool isGrounded = true;
-		[FormerlySerializedAs("rayCaster")] [SerializeField] private SphereCaster sphereCaster;
-		[SerializeField]
-		private Transform cameraFocusPoint;
+		// [SerializeField] private SphereCaster sphereCaster;
 
-		private Vector3 cameraRotation;
-
-		public bool IsGrounded
+		private bool IsGrounded
 		{
 			get => isGrounded;
 			set
@@ -40,7 +35,6 @@ namespace Semina
 		private void Start()
 		{
 			currentSpeed = speed;
-			cameraRotation = cameraFocusPoint.rotation.eulerAngles;
 		}
 
 		public void Jump()
@@ -55,9 +49,9 @@ namespace Semina
 
 		public void Move(Vector2 direction)
 		{
-			var horizontalVelocity = new Vector3(direction.x, 0, direction.y) * currentSpeed;
-			MovePlayer(horizontalVelocity);
-			UpdateRunAnimation(horizontalVelocity);
+			var inputSurfaceVelocity = new Vector3(direction.x, 0, direction.y) * currentSpeed;
+			MoveCharacter(inputSurfaceVelocity);
+			UpdateRunAnimation(inputSurfaceVelocity);
 		}
 
 		private void UpdateRunAnimation(Vector3 horizontalVelocity)
@@ -67,32 +61,22 @@ namespace Semina
 
 		private void Update()
 		{
-			IsGrounded = sphereCaster.IsIntersecting();
-			playerAnimatorController.IsFreeFall = rigidBody.velocity.y < 0f && IsGrounded == false;
+			// IsGrounded = sphereCaster.IsIntersecting();
+			// playerAnimatorController.IsFreeFall = rigidBody.velocity.y < 0f && IsGrounded == false;
 		}
 
-		private void MovePlayer(Vector3 inputHorizontalVelocity)
+		private void MoveCharacter(Vector3 inputSurfaceVelocity)
 		{
-			var rigidBodyVelocity = CalculateVelocity(inputHorizontalVelocity);
+			var rigidBodyVelocity = CalculateVelocity(inputSurfaceVelocity);
 			rigidBody.velocity = rigidBodyVelocity;
 
-			if (inputHorizontalVelocity == Vector3.zero) return;
-
-			var cameraLookRotation = GetSurfaceLookRotationFromCamera();
-			transform.rotation = Quaternion.RotateTowards(playerTransform.rotation, cameraLookRotation * Quaternion.LookRotation(inputHorizontalVelocity), rotationSpeed * Time.deltaTime);
-		}
-
-		private static Quaternion GetSurfaceLookRotationFromCamera()
-		{
-			var horizontalDirection = Camera.main.transform.forward;
-			horizontalDirection.y = 0;
-			return Quaternion.LookRotation(horizontalDirection);
+			if (inputSurfaceVelocity == Vector3.zero) return;
+			transform.rotation = Quaternion.RotateTowards(playerTransform.rotation, Quaternion.LookRotation(inputSurfaceVelocity), rotationSpeed * Time.deltaTime);
 		}
 
 		private Vector3 CalculateVelocity(Vector3 horizontalVelocity)
 		{
-			var lookRotation = GetSurfaceLookRotationFromCamera();
-			var rigidBodyVelocity = lookRotation * new Vector3(horizontalVelocity.x, 0, horizontalVelocity.z);
+			var rigidBodyVelocity = new Vector3(horizontalVelocity.x, 0, horizontalVelocity.z);
 			rigidBodyVelocity.y = rigidBody.velocity.y;
 			return rigidBodyVelocity;
 		}
@@ -105,14 +89,6 @@ namespace Semina
 		private void Reset()
 		{
 			playerTransform = GetComponent<Transform>();
-			sphereCaster = GetComponent<SphereCaster>();
-		}
-
-		public void RotateCamera(Vector2 look)
-		{
-			cameraRotation += new Vector3(-look.y, look.x);
-			var quaternion = Quaternion.Euler(cameraRotation);
-			cameraFocusPoint.rotation = quaternion;
 		}
 	}
 }

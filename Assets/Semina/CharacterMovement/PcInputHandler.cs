@@ -8,22 +8,18 @@ namespace Semina
 {
 	public class PcInputHandler : MonoBehaviour
 	{
-		[SerializeField] private Semina.ThirdPersonController thirdPersonController;
-		private Vector3 lastMousePosition = Vector3.zero;
+		// [SerializeField] private Semina.ThirdPersonController thirdPersonController;
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				thirdPersonController.Jump();
-			}
-
-			var currentMoveDirection = GetCurrentMoveDirection();
-			thirdPersonController.Move(currentMoveDirection);
-			this.thirdPersonController.Sprint(Input.GetKey(KeyCode.LeftShift));
-
-			var currentMouseDeltaPosition = GetCurrentMouseDeltaPosition();
-			thirdPersonController.RotateCamera(currentMouseDeltaPosition);
+			// if (Input.GetKeyDown(KeyCode.Space))
+			// {
+			// 	thirdPersonController.Jump();
+			// }
+			//
+			// var currentMoveDirection = GetCurrentMoveDirection();
+			// thirdPersonController.Move(currentMoveDirection);
+			// this.thirdPersonController.Sprint(Input.GetKey(KeyCode.LeftShift));
 		}
 
 		private static Vector2 GetCurrentMouseDeltaPosition()
@@ -34,14 +30,6 @@ namespace Semina
 		private static Vector2 GetCurrentMoveDirection()
 		{
 			return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-		}
-
-		private void OnApplicationFocus(bool hasFocus)
-		{
-			if (hasFocus)
-			{
-				Cursor.lockState = CursorLockMode.Locked;
-			}
 		}
 	}
 }
